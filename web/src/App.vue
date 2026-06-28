@@ -1,5 +1,5 @@
 <script setup></script>
 
-<template>express-vue-starter</template>
+<template>mailclient</template>
 
 <style scoped></style>

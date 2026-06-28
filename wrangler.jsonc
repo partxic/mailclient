@@ -1,5 +1,5 @@
 {
-    "name": "express-vue-starter",
+    "name": "mailclient",
     "main": "src/app.js",
     "compatibility_date": "2026-05-11",
     "compatibility_flags": ["nodejs_compat"],

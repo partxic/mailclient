@@ -1,5 +1,5 @@
 {
-    "name": "express-vue-starter",
+    "name": "mailclient",
     "type": "module",
     "scripts": {
         "deploy": "wrangler deploy",

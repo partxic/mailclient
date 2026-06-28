@@ -1,3 +1,3 @@
-# cfworker-express-vue-starter
+# mailclient
 
-Cloudflare Worker 上的 Express + Vue 开始代码
+Cloudflare Worker 上运行的邮件客户端
