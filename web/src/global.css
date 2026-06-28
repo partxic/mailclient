@@ -5,3 +5,17 @@ body {
     width: 100vw;
     height: 100vh;
 }
+
+.display-none {
+    display: none;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-1 {
+    flex: 1;
+}
