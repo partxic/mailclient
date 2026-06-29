@@ -74,18 +74,6 @@ const saveAccount = async () => {
     }
 }
 
-const testAccount = async () => {
-    try {
-        loading.value = true
-        const res = await axios.get(`/api/mail/test?account=${accountStore.account}`)
-        ElMessage.success(res.data)
-    } catch (error) {
-        ElMessage.error(error.response.data)
-    } finally {
-        loading.value = false
-    }
-}
-
 const deleteAccount = async () => {
     try {
         loading.value = true
@@ -111,9 +99,6 @@ const deleteAccount = async () => {
     </el-dropdown-item>
     <el-dropdown-item>
         <el-button :loading="loading" @click="editAccount" link>编辑账号</el-button>
-    </el-dropdown-item>
-    <el-dropdown-item>
-        <el-button :loading="loading" @click="testAccount" link>测试账号</el-button>
     </el-dropdown-item>
     <el-dropdown-item>
         <el-button type="danger" :loading="loading" @click="deleteAccount" link>删除账号</el-button>

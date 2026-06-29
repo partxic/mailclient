@@ -49,7 +49,7 @@ const doLogout = async () => {
                 </template>
             </el-dropdown>
         </div>
-        <div class="flex-1"></div>
+        <div v-if="accountStore.account !== ''" class="flex-1"></div>
     </div>
 </template>
 
