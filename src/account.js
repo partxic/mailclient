@@ -45,6 +45,10 @@ account.post('/save', async (req, res) => {
         return res.status(400).send('别名信息错误')
     }
 
+    if (smtpPort === 25) {
+        return res.status(403).send('SMTP 端口不能是 25')
+    }
+
     await env.data.put(
         address,
         JSON.stringify({
