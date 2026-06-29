@@ -76,4 +76,16 @@ mail.use(async (req, res, next) => {
     return next()
 })
 
+mail.get('/folders', async (req, res) => {
+    const namespaces = await req.imapClient.getNamespaces()
+    const allFolders = []
+
+    for (const namespace of namespaces) {
+        const folders = await req.imapClient.getFolders(namespace, '*')
+        allFolders.push(...folders)
+    }
+
+    return res.status(200).json(allFolders)
+})
+
 export default mail
