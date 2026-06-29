@@ -67,7 +67,11 @@ mail.use(async (req, res, next) => {
 })
 
 mail.get('/folders', async (req, res) => {
-    await req.connectImapServer()
+    try {
+        await req.connectImapServer()
+    } catch {
+        return res.status(400).send('无法连接 IMAP 服务器')
+    }
 
     const namespaces = await req.imapClient.getNamespaces()
     const allFolders = []
@@ -80,16 +84,23 @@ mail.get('/folders', async (req, res) => {
     return res.status(200).json(allFolders.map(item => item.name))
 })
 
+const mailPerPage = 20
+
 mail.get('/count', async (req, res) => {
     const { folder } = req.query
     if (typeof folder !== 'string' || folder === '') {
         return res.status(400).send('请求错误')
     }
 
-    await req.connectImapServer()
+    try {
+        await req.connectImapServer()
+    } catch {
+        return res.status(400).send('无法连接 IMAP 服务器')
+    }
 
-    const { emails } = await req.imapClient.selectFolder(folder)
-    return res.status(200).json({ emails })
+    const { emails: totalMails } = await req.imapClient.selectFolder(folder)
+    const totalPages = Math.ceil(totalMails / mailPerPage)
+    return res.status(200).json({ totalPages })
 })
 
 mail.get('/list', async (req, res) => {
@@ -103,10 +114,13 @@ mail.get('/list', async (req, res) => {
         return res.status(400).send('参数错误')
     }
 
-    await req.connectImapServer()
+    try {
+        await req.connectImapServer()
+    } catch {
+        return res.status(400).send('无法连接 IMAP 服务器')
+    }
 
     const { emails: totalMails } = await req.imapClient.selectFolder(folder)
-    const mailPerPage = 20
     const mailStart = (page - 1) * mailPerPage + 1
     const mailEnd = Math.min(page * mailPerPage, totalMails)
 
