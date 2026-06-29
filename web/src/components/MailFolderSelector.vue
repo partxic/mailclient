@@ -43,7 +43,6 @@ watch(
                         <el-text size="large">{{ folder }}</el-text>
                     </el-button>
                 </div>
-                <div v-for="i in 100">{{ i }}</div>
             </el-scrollbar>
         </div>
     </div>
