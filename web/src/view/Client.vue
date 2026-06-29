@@ -78,7 +78,6 @@ const doLogout = async () => {
 }
 
 .main-view {
-    min-height: 0;
     display: flex;
     column-gap: 10px;
 }

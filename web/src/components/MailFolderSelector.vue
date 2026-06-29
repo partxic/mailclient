@@ -36,13 +36,16 @@ watch(
 <template>
     <div class="view-container">
         <el-button type="primary" :loading="loading" :icon="Refresh" @click="fetchFolders" plain />
-        <el-scrollbar>
-            <div class="folders">
-                <el-button v-for="folder in folders" @click="mailboxStore.folder = folder" link>
-                    <el-text size="large">{{ folder }}</el-text>
-                </el-button>
-            </div>
-        </el-scrollbar>
+        <div class="flex-1">
+            <el-scrollbar>
+                <div class="folders">
+                    <el-button v-for="folder in folders" @click="mailboxStore.folder = folder" link>
+                        <el-text size="large">{{ folder }}</el-text>
+                    </el-button>
+                </div>
+                <div v-for="i in 100">{{ i }}</div>
+            </el-scrollbar>
+        </div>
     </div>
 </template>
 
@@ -52,15 +55,15 @@ watch(
     height: 100%;
 }
 
+.view-container,
 .folders {
-    margin-top: 10px;
-    row-gap: 10px;
-
     display: flex;
     flex-direction: column;
+
+    row-gap: 10px;
 }
 
-.folders .el-button {
+.el-button {
     margin: 0;
     width: fit-content;
 }
