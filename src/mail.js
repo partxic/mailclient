@@ -11,8 +11,8 @@ import { CFImap } from 'cf-imap'
 import { WorkerMailer } from 'worker-mailer'
 
 mail.use(async (req, res, next) => {
-    const { account, enable } = req.query
-    if (typeof account !== 'string' || account === '' || typeof enable !== 'string' || enable === '') {
+    const { account } = req.query
+    if (typeof account !== 'string' || account === '') {
         return res.status(400).send('请求错误')
     }
 
@@ -33,7 +33,7 @@ mail.use(async (req, res, next) => {
         password: config.password
     }
 
-    if (enable.includes('imap')) {
+    req.connectImapServer = async () => {
         try {
             const imapClient = new CFImap({
                 host: config.imapServer,
@@ -53,7 +53,7 @@ mail.use(async (req, res, next) => {
         }
     }
 
-    if (enable.includes('smtp')) {
+    req.connectSmtpServer = async () => {
         try {
             const smtpClient = await WorkerMailer.connect({
                 host: config.smtpServer,
@@ -77,6 +77,8 @@ mail.use(async (req, res, next) => {
 })
 
 mail.get('/folders', async (req, res) => {
+    await req.connectImapServer()
+
     const namespaces = await req.imapClient.getNamespaces()
     const allFolders = []
 
@@ -85,7 +87,7 @@ mail.get('/folders', async (req, res) => {
         allFolders.push(...folders)
     }
 
-    return res.status(200).json(allFolders)
+    return res.status(200).json(allFolders.map(item => item.name))
 })
 
 export default mail
