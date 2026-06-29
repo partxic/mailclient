@@ -30,11 +30,7 @@ const doLogout = async () => {
         <div class="top-bar">
             <div class="flex-1" />
             <el-dropdown trigger="click" :show-arrow="false">
-                <span class="el-dropdown-link">
-                    <el-icon class="el-icon--right">
-                        <UserFilled />
-                    </el-icon>
-                </span>
+                <el-icon><UserFilled /></el-icon>
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item>
