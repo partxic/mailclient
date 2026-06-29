@@ -23,7 +23,7 @@ const selectAccount = async account => {
 
     try {
         loading.value = true
-        const res = await axios.get(`/api/mail/test?account=${account}`)
+        const res = await axios.get(`/api/mail/test?account=${account}&enable=imap,smtp`)
 
         ElMessage.success(res.data)
         accountStore.account = account

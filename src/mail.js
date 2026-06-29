@@ -11,8 +11,8 @@ import { CFImap } from 'cf-imap'
 import { WorkerMailer } from 'worker-mailer'
 
 mail.use(async (req, res, next) => {
-    const { account } = req.query
-    if (typeof account !== 'string' || account === '') {
+    const { account, enable } = req.query
+    if (typeof account !== 'string' || account === '' || typeof enable !== 'string' || enable === '') {
         return res.status(400).send('请求错误')
     }
 
@@ -33,40 +33,44 @@ mail.use(async (req, res, next) => {
         password: config.password
     }
 
-    try {
-        const imapClient = new CFImap({
-            host: config.imapServer,
-            port: config.imapPort,
-            tls: config.imapPort === 993,
-            auth: authCredentials
-        })
+    if (enable.includes('imap')) {
+        try {
+            const imapClient = new CFImap({
+                host: config.imapServer,
+                port: config.imapPort,
+                tls: config.imapPort === 993,
+                auth: authCredentials
+            })
 
-        await imapClient.connect()
-        req.imapClient = imapClient
+            await imapClient.connect()
+            req.imapClient = imapClient
 
-        res.on('finish', imapClient.logout)
-        res.on('close', imapClient.logout)
-    } catch (error) {
-        console.error(error)
-        return res.status(400).send('无法连接至 IMAP 服务器')
+            res.on('finish', imapClient.logout)
+            res.on('close', imapClient.logout)
+        } catch (error) {
+            console.error(error)
+            return res.status(400).send('无法连接至 IMAP 服务器')
+        }
     }
 
-    try {
-        const smtpClient = await WorkerMailer.connect({
-            host: config.smtpServer,
-            port: config.smtpPort,
-            secure: config.smtpPort === 465,
-            credentials: authCredentials,
-            authType: ['plain', 'login', 'cram-md5']
-        })
+    if (enable.includes('smtp')) {
+        try {
+            const smtpClient = await WorkerMailer.connect({
+                host: config.smtpServer,
+                port: config.smtpPort,
+                secure: config.smtpPort === 465,
+                credentials: authCredentials,
+                authType: ['plain', 'login', 'cram-md5']
+            })
 
-        req.smtpClient = smtpClient
+            req.smtpClient = smtpClient
 
-        res.on('finish', smtpClient.close)
-        res.on('close', smtpClient.close)
-    } catch (error) {
-        console.error(error)
-        return res.status(400).send('无法连接至 SMTP 服务器')
+            res.on('finish', smtpClient.close)
+            res.on('close', smtpClient.close)
+        } catch (error) {
+            console.error(error)
+            return res.status(400).send('无法连接至 SMTP 服务器')
+        }
     }
 
     return next()
