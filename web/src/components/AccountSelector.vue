@@ -19,6 +19,8 @@ const fetchAccounts = async () => {
 }
 
 const selectAccount = async account => {
+    if (account === accountStore.account) return
+
     try {
         loading.value = true
         const res = await axios.get(`/api/mail/test?account=${account}`)
