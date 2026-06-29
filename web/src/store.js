@@ -13,3 +13,9 @@ export const useAccountStore = defineStore('account', () => {
 
     return { account, accounts, fetchAccounts }
 })
+
+export const useMailboxStore = defineStore('mailbox', () => {
+    const folder = ref('')
+
+    return { folder }
+})

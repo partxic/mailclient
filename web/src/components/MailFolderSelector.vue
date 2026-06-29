@@ -1,11 +1,13 @@
 <script setup>
-import { useAccountStore } from '@/store'
+import { useAccountStore, useMailboxStore } from '@/store'
+import { Refresh } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { watch, ref } from 'vue'
 
 const loading = ref(false)
 const accountStore = useAccountStore()
+const mailboxStore = useMailboxStore()
 const folders = ref([])
 
 const fetchFolders = async () => {
@@ -32,7 +34,14 @@ watch(
 
 <template>
     <div class="view-container">
-        <el-scrollbar></el-scrollbar>
+        <el-scrollbar>
+            <el-button type="primary" :loading="loading" :icon="Refresh" @click="fetchFolders" plain />
+            <div class="folders">
+                <el-button v-for="folder in folders" @click="mailboxStore.folder = folder" link>
+                    <el-text size="large">{{ folder }}</el-text>
+                </el-button>
+            </div>
+        </el-scrollbar>
     </div>
 </template>
 
@@ -40,5 +49,18 @@ watch(
 .view-container {
     width: 200px;
     height: 100%;
+}
+
+.folders {
+    margin-top: 10px;
+    row-gap: 10px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.folders .el-button {
+    margin: 0;
+    width: fit-content;
 }
 </style>
