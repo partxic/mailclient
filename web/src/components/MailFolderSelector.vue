@@ -35,8 +35,8 @@ watch(
 
 <template>
     <div class="view-container">
+        <el-button type="primary" :loading="loading" :icon="Refresh" @click="fetchFolders" plain />
         <el-scrollbar>
-            <el-button type="primary" :loading="loading" :icon="Refresh" @click="fetchFolders" plain />
             <div class="folders">
                 <el-button v-for="folder in folders" @click="mailboxStore.folder = folder" link>
                     <el-text size="large">{{ folder }}</el-text>
