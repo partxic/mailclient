@@ -1,5 +1,5 @@
 <script setup>
-import { useAccountStore, useMailboxStore } from '@/store'
+import { useAccountStore, useMailboxStore } from '@/store.js'
 import { Refresh } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'

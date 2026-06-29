@@ -90,4 +90,16 @@ mail.get('/folders', async (req, res) => {
     return res.status(200).json(allFolders.map(item => item.name))
 })
 
+mail.get('/count', async (req, res) => {
+    const { folder } = req.query
+    if (typeof folder !== 'string' || folder === '') {
+        return res.status(400).send('请求错误')
+    }
+
+    await req.connectImapServer()
+
+    const { emails } = await req.imapClient.selectFolder(folder)
+    return res.status(200).json({ emails })
+})
+
 export default mail
