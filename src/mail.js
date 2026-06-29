@@ -92,4 +92,35 @@ mail.get('/count', async (req, res) => {
     return res.status(200).json({ emails })
 })
 
+mail.get('/list', async (req, res) => {
+    const { folder, page: rawPage } = req.query
+    if (typeof folder !== 'string' || folder === '' || typeof rawPage !== 'string' || rawPage === '') {
+        return res.status(400).send('请求错误')
+    }
+
+    const page = parseInt(rawPage, 10)
+    if (isNaN(page) || page < 1) {
+        return res.status(400).send('参数错误')
+    }
+
+    await req.connectImapServer()
+
+    const { emails: totalMails } = await req.imapClient.selectFolder(folder)
+    const mailPerPage = 20
+    const mailStart = (page - 1) * mailPerPage + 1
+    const mailEnd = Math.min(page * mailPerPage, totalMails)
+
+    if (mailStart > totalMails) {
+        return res.status(200).json([])
+    }
+
+    const result = await req.imapClient.fetchEmails({
+        limit: [mailStart, mailEnd],
+        folder: folder,
+        fetchBody: false
+    })
+
+    return res.status(200).json(result)
+})
+
 export default mail
