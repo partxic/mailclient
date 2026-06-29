@@ -1,7 +1,7 @@
 <script setup>
 import { useAccountStore } from '@/store.js'
 import { ElMessage } from 'element-plus'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
 const loading = ref(false)
@@ -31,14 +31,6 @@ const selectAccount = async account => {
         loading.value = false
     }
 }
-
-watch(
-    () => accountStore.account,
-    account => {
-        if (account === '') return
-        ElMessage.info(`切换至 ${account}`)
-    }
-)
 
 onMounted(fetchAccounts)
 </script>
