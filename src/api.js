@@ -39,6 +39,9 @@ api.use('/auth', auth)
 import account from './account.js'
 api.use('/account', account)
 
+import mail from './mail.js'
+api.use('/mail', mail)
+
 import { createServer, get } from 'node:http'
 import { httpServerHandler } from 'cloudflare:node'
 const server = createServer(app)

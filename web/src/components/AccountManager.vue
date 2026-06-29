@@ -110,8 +110,8 @@ const deleteAccount = async () => {
                 <el-input-number v-if="typeof value === 'number'" v-model="formData[key]" />
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="saveAccount">保存</el-button>
-                <el-button @click="showEditor = false">取消</el-button>
+                <el-button type="primary" :loading="loading" @click="saveAccount">保存</el-button>
+                <el-button :loading="loading" @click="showEditor = false">取消</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
