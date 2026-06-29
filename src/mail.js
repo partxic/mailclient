@@ -76,8 +76,4 @@ mail.use(async (req, res, next) => {
     return next()
 })
 
-mail.get('/test', async (req, res) => {
-    return res.status(200).send('账号正常')
-})
-
 export default mail

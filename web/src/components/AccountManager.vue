@@ -2,7 +2,7 @@
 import { useAccountStore } from '@/store.js'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
 const loading = ref(false)
 const showEditor = ref(false)
@@ -88,6 +88,8 @@ const deleteAccount = async () => {
         loading.value = false
     }
 }
+
+onMounted(fetchAccounts)
 </script>
 
 <template>
