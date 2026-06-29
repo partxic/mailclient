@@ -7,6 +7,8 @@ import { Refresh } from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const totalMails = ref(0)
+const currentPage = ref(1)
+const mails = ref([])
 const mailboxStore = useMailboxStore()
 const accountStore = useAccountStore()
 
@@ -22,8 +24,29 @@ const fetchCount = async () => {
     }
 }
 
+const fetchMails = async () => {
+    try {
+        loading.value = true
+        const res = await axios.get(`/api/mail/list?account=${accountStore.account}&folder=${mailboxStore.folder}&page=${currentPage.value}`)
+        mails.value.push(...res.data)
+    } catch (error) {
+        ElMessage.error(error.response.data)
+    } finally {
+        loading.value = false
+    }
+}
+
 const refresh = async () => {
     await fetchCount()
+    if (totalMails.value === 0) return
+
+    mails.value = []
+    const totalPage = currentPage.value
+
+    for (let i = 1; i <= totalPage; i++) {
+        currentPage.value = i
+        await fetchMails()
+    }
 }
 
 watch(
