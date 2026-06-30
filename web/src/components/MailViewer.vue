@@ -3,31 +3,64 @@ import { useMailboxStore } from '@/store.js'
 import { ref, watch } from 'vue'
 import PostalMime from 'postal-mime'
 import DOMPurify from 'dompurify'
+import Color from 'color'
 
 const parsedContent = ref('')
 const mailboxStore = useMailboxStore()
 
 watch(
     () => mailboxStore.mailData.body,
-    async rawData => {
-        if (!rawData) return ''
-        let standardizedMime = rawData
+    async body => {
+        if (!body) return ''
+        let raw = body
 
-        if (rawData.includes('From:') && rawData.includes('Subject:')) {
-            const headerIndex = rawData.search(/(From:|Subject:|Date:|Content-Type: multipart)/i)
+        if (body.includes('From:') && body.includes('Subject:')) {
+            const headerIndex = body.search(/(From:|Subject:|Date:|Content-Type: multipart)/i)
 
             if (headerIndex !== -1) {
-                let headersPart = rawData.substring(headerIndex)
-                let bodyPart = rawData.substring(0, headerIndex)
+                let headersPart = body.substring(headerIndex)
+                let bodyPart = body.substring(0, headerIndex)
                 headersPart = headersPart.replace(/BODY\[HEADER[\s\S]*?\]\s*\{\d+\}/gi, '')
-                standardizedMime = `${headersPart.trim()}\n\n${bodyPart.trim()}`
+                raw = `${headersPart.trim()}\n\n${bodyPart.trim()}`
             }
         }
 
-        const parser = new PostalMime()
-        const mail = await parser.parse(standardizedMime)
-        let content = mail.html || mail.text || ''
-        parsedContent.value = DOMPurify.sanitize(content)
+        let content = ''
+
+        {
+            const parser = new PostalMime()
+            const mail = await parser.parse(raw)
+
+            content = mail.html || mail.text || ''
+            content = DOMPurify.sanitize(content)
+        }
+
+        {
+            const parser = new DOMParser()
+            const doc = parser.parseFromString(htmlString, 'text/html')
+            const elements = doc.querySelectorAll('[style]')
+
+            elements.forEach(el => {
+                const text = el.style.color
+                if (!text) return
+
+                try {
+                    let c = Color(text)
+                    if (!c.isDark()) return
+
+                    c = c.lightness(80)
+                    if (c.saturationl() > 60) {
+                        c = c.saturationl(60)
+                    }
+
+                    el.style.color = c.hex()
+                } catch {}
+            })
+
+            content = doc.body.innerHTML
+        }
+
+        parsedContent.value = content
     },
     { immediate: true }
 )
@@ -90,7 +123,6 @@ watch(
     font-size: 0.95rem;
     line-height: 1.6;
     word-break: break-word;
-    filter: invert(1) hue-rotate(180deg);
 }
 
 .mail-body :deep(*) {
@@ -101,10 +133,5 @@ watch(
     white-space: pre-wrap;
     font-family: inherit;
     color: inherit;
-}
-
-.mail-body :deep(img),
-.mail-body :deep(svg) {
-    filter: invert(1) hue-rotate(180deg);
 }
 </style>
