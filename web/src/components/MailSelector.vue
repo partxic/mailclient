@@ -8,6 +8,7 @@ import axios from 'axios'
 const loading = ref(false)
 const totalPages = ref(0)
 const currentPage = ref(1)
+const mails = ref([])
 const accountStore = useAccountStore()
 const mailboxStore = useMailboxStore()
 
@@ -23,10 +24,31 @@ const fetchCount = async () => {
     }
 }
 
+const fetchMails = async () => {
+    try {
+        loading.value = true
+        const res = await axios.get(`/api/mail/list?account=${accountStore.account}&folder=${mailboxStore.folder}&page=${currentPage.value}`)
+        mails.value = res.data
+    } catch (error) {
+        ElMessage.error(error.response.data)
+    } finally {
+        loading.value = false
+    }
+}
+
 const refresh = async () => {
     await fetchCount()
     if (totalPages.value < 1) return
+    await fetchMails()
 }
+
+watch(
+    () => currentPage.value,
+    page => {
+        if (page === 0) return
+        fetchMails()
+    }
+)
 
 watch(
     () => mailboxStore.folder,
@@ -56,6 +78,7 @@ watch(
 .view-container {
     width: 300px;
     height: 100%;
+    row-gap: 10px;
 }
 
 .top-bar {
@@ -72,8 +95,6 @@ watch(
 .mails {
     display: flex;
     flex-direction: column;
-
-    row-gap: 10px;
 }
 
 .el-button {
