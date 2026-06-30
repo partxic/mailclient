@@ -125,10 +125,10 @@ mail.get('/list', async (req, res) => {
 
     const realFolder = utf7.imap.encode(folder)
     const { emails: totalMails } = await req.imapClient.selectFolder(realFolder)
-    const mailStart = (page - 1) * mailPerPage + 1
-    const mailEnd = Math.min(page * mailPerPage, totalMails)
+    const mailStart = Math.max(1, totalMails - page * mailPerPage + 1)
+    const mailEnd = totalMails - (page - 1) * mailPerPage
 
-    if (mailStart > totalMails) {
+    if (mailEnd <= 0) {
         return res.status(200).json([])
     }
 
@@ -138,7 +138,7 @@ mail.get('/list', async (req, res) => {
         fetchBody: false
     })
 
-    return res.status(200).json(result.filter(item => item.messageID))
+    return res.status(200).json(result.filter(item => item.messageID).reverse())
 })
 
 mail.get('/content', async (req, res) => {
@@ -161,8 +161,8 @@ mail.get('/content', async (req, res) => {
 
     const realFolder = utf7.imap.encode(folder)
     const { emails: totalMails } = await req.imapClient.selectFolder(realFolder)
-    const realId = (page - 1) * mailPerPage + id
-    if (realId > totalMails) {
+    const realId = totalMails - (page - 1) * mailPerPage - (id - 1)
+    if (realId < 1 || realId > totalMails) {
         return res.status(404).send('邮件未找到')
     }
 
