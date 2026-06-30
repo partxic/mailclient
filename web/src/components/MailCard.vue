@@ -17,7 +17,7 @@ const emits = defineEmits(['click'])
             <span class="mail-from">{{ mail.from }}</span>
             <span class="mail-date">{{ new Date(mail.date).toLocaleDateString() }}</span>
         </div>
-        <div class="mail-subject">{{ mail.subject }}</div>
+        <div class="mail-subject">{{ mail.subject || '(无主题)' }}</div>
         <div class="mail-to">至: {{ mail.to }}</div>
     </div>
 </template>
