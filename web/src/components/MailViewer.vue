@@ -34,7 +34,7 @@ watch(
 </script>
 
 <template>
-    <div class="view-container">
+    <div class="view-container flex-1">
         <div class="mail-header">
             <h2 class="mail-subject">{{ mailboxStore.mailData.subject || '(无主题)' }}</h2>
             <div class="mail-meta">
@@ -43,7 +43,9 @@ watch(
                 <p><span>时间:</span>{{ new Date(mailboxStore.mailData.date).toLocaleString() }}</p>
             </div>
         </div>
-        <iframe :srcdoc="parsedContent" class="mail-iframe" />
+        <el-scrollbar>
+            <div class="mail-body flex-1" v-html="parsedContent" />
+        </el-scrollbar>
     </div>
 </template>
 
@@ -83,11 +85,26 @@ watch(
     width: 60px;
 }
 
-.mail-iframe {
-    width: 100%;
-    min-height: 200px;
-    display: block;
-    border: none;
+.mail-body {
     background: transparent;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    word-break: break-word;
+    filter: invert(1) hue-rotate(180deg);
+}
+
+.mail-body :deep(*) {
+    background-color: transparent !important;
+}
+
+.mail-body :deep(pre) {
+    white-space: pre-wrap;
+    font-family: inherit;
+    color: inherit;
+}
+
+.mail-body :deep(img),
+.mail-body :deep(svg) {
+    filter: invert(1) hue-rotate(180deg);
 }
 </style>
