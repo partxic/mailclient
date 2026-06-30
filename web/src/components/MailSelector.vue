@@ -45,6 +45,7 @@ const refresh = async () => {
 }
 
 const onMailClick = async idx => {
+    if (loading.value) return
     mailboxStore.emptyMailData()
 
     try {
