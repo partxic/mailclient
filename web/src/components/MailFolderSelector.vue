@@ -27,6 +27,7 @@ watch(
     account => {
         if (account === '') return
         mailboxStore.folder = ''
+        mailboxStore.emptyMailData()
         fetchFolders()
     },
     { immediate: true }

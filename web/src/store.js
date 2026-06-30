@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 export const useAccountStore = defineStore('account', () => {
     const account = ref('')
@@ -17,5 +17,29 @@ export const useAccountStore = defineStore('account', () => {
 export const useMailboxStore = defineStore('mailbox', () => {
     const folder = ref('')
 
-    return { folder }
+    const mailData = reactive({
+        from: '',
+        to: '',
+        subject: '',
+        messageID: '',
+        contentType: '',
+        date: '',
+        raw: '',
+        body: ''
+    })
+
+    const emptyMailData = () => {
+        Object.assign(mailData, {
+            from: '',
+            to: '',
+            subject: '',
+            messageID: '',
+            contentType: '',
+            date: '',
+            raw: '',
+            body: ''
+        })
+    }
+
+    return { folder, mailData, emptyMailData }
 })

@@ -5,6 +5,7 @@ import AccountManager from '@/components/AccountManager.vue'
 import AccountSelector from '@/components/AccountSelector.vue'
 import MailFolderSelector from '@/components/MailFolderSelector.vue'
 import MailSelector from '@/components/MailSelector.vue'
+import MailViewer from '@/components/MailViewer.vue'
 import { useAccountStore, useMailboxStore } from '@/store.js'
 import { UserFilled } from '@element-plus/icons-vue'
 import axios from 'axios'
@@ -55,6 +56,7 @@ const doLogout = async () => {
         <div v-if="accountStore.account !== ''" class="main-view flex-1">
             <MailFolderSelector />
             <MailSelector v-if="mailboxStore.folder !== ''" />
+            <MailViewer v-if="mailboxStore.mailData.body !== ''" />
         </div>
     </div>
 </template>

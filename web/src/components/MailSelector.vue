@@ -45,7 +45,17 @@ const refresh = async () => {
 }
 
 const onMailClick = async idx => {
-    console.log(idx)
+    mailboxStore.emptyMailData()
+
+    try {
+        loading.value = true
+        const res = await axios.get(`/api/mail/content?account=${accountStore.account}&folder=${mailboxStore.folder}&page=${currentPage.value}&id=${idx}`)
+        Object.assign(mailboxStore.mailData, res.data)
+    } catch (error) {
+        ElMessage.error(error.response.data)
+    } finally {
+        loading.value = false
+    }
 }
 
 watch(
