@@ -38,8 +38,14 @@ watch(
         {
             const parser = new DOMParser()
             const doc = parser.parseFromString(content, 'text/html')
-            const elements = doc.querySelectorAll('[style]')
 
+            const links = doc.querySelectorAll('a')
+            links.forEach(link => {
+                link.setAttribute('target', '_blank')
+                link.setAttribute('rel', 'noopener noreferrer')
+            })
+
+            const elements = doc.querySelectorAll('[style]')
             elements.forEach(el => {
                 const text = el.style.color
                 if (!text) return
