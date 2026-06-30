@@ -66,6 +66,8 @@ mail.use(async (req, res, next) => {
     return next()
 })
 
+import utf7 from 'utf7'
+
 mail.get('/folders', async (req, res) => {
     try {
         await req.connectImapServer()
@@ -81,7 +83,7 @@ mail.get('/folders', async (req, res) => {
         allFolders.push(...folders)
     }
 
-    return res.status(200).json(allFolders.map(item => item.name))
+    return res.status(200).json(allFolders.map(item => utf7.imap.decode(item.name)))
 })
 
 const mailPerPage = 20
