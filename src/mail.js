@@ -23,9 +23,9 @@ mail.use(async (req, res, next) => {
 
     const config = JSON.parse(result)
 
-    req.emalAccount = {
-        address: account,
-        name: config.displayName
+    req.mailAccount = {
+        name: config.displayName,
+        email: account
     }
 
     const authCredentials = {
@@ -173,6 +173,32 @@ mail.get('/content', async (req, res) => {
     })
 
     return res.status(200).json(result.filter(item => item.messageID)[0])
+})
+
+mail.post('/send', async (req, res) => {
+    const { to, subject, plaintext, content } = req.body
+    if (typeof to !== 'string' || to === '') {
+        return res.status(400).send('发送目标错误')
+    }
+
+    if (typeof subject !== 'string' || subject === '' || typeof plaintext !== 'boolean' || typeof content !== 'string' || content === '') {
+        return res.status(400).send('发送内容错误')
+    }
+
+    try {
+        await req.connectSmtpServer()
+    } catch {
+        return res.status(400).send('无法连接 SMTP 服务器')
+    }
+
+    await req.smtpClient.send({
+        from: req.mailAccount,
+        to: to.includes(',') ? to.split(',').map(item => item.trim()) : to,
+        subject,
+        [plaintext ? 'text' : 'html']: content
+    })
+
+    return res.status(200).send('发送成功')
 })
 
 export default mail
