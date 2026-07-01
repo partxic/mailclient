@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "https://mailclient.partxi.workers.dev/$1"
+        }
+    ]
+}
